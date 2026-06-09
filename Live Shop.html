@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>LiveShop - Your One-Stop Shopping Destination</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Mobile Container */
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 700px;
+            background: #f5f5f5;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #fff;
+            padding: 12px 20px 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 16px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 20px;
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            display: block;
+        }
+
+        .nav-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .nav-item.active .nav-icon,
+        .nav-item.active .nav-label {
+            color: #FF6B35;
+            font-weight: bold;
+        }
+
+        /* Screen Container */
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #fff;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+        }
+
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .product-info {
+            padding: 12px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .product-price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #FF6B35;
+            margin-bottom: 8px;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .add-to-cart-btn {
+            background: #FF6B35;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            width: 100%;
+        }
+
+        /* Cart Items */
+        .cart-item {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-price {
+            color: #FF6B35;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quantity-btn {
+            background: #f0f0f0;
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Categories */
+        .categories {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+        }
+
+        .category-chip {
+            padding: 8px 16px;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            border: 1px solid #e0e0e0;
+        }
+
+        .category-chip.active {
+            background: #FF6B35;
+            color: white;
+            border-color: #FF6B35;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .search-bar input {
+            padding-left: 40px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #999;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Badge */
+        .cart-badge {
+            background: #FF6B35;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 10px;
+            position: absolute;
+            top: -5px;
+            right: -10px;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Settings Section */
+        .settings-option {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: #ccc;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #FF6B35;
+        }
+
+        .toggle-slider {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 11px;
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            transition: 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            left: 25px;
+        }
+
+        /* Customer Service */
+        .message-bubble {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            max-width: 80%;
+        }
+
+        .message-bubble.sent {
+            background: #FF6B35;
+            color: white;
+            margin-left: auto;
+        }
+
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            padding: 16px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="status-bar">
+        <span>9:41</span>
+        <span>📶 🔋 100%</span>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="screen active">
+            <div style="text-align: center; padding: 40px 20px;">
+                <div style="font-size: 80px; margin-bottom: 20px;">🛍️</div>
+                <h1 style="color: #FF6B35; margin-bottom: 10px;">LiveShop</h1>
+                <p style="color: #666; margin-bottom: 40px;">Your One-Stop Shopping Destination</p>
+                
+                <div class="form-group">
+                    <input type="email" id="loginEmail" placeholder="Email" value="demo@liveshop.com">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="Password" value="demo123">
+                </div>
+                <button onclick="handleLogin()">Login</button>
+                
+                <p style="margin-top: 20px; color: #666;">
+                    New user? <a href="#" onclick="showSignup()" style="color: #FF6B35;">Sign Up</a>
+                </p>
+                <p style="margin-top: 10px; font-size: 12px; color: #999;">
+                    Demo: demo@liveshop.com / demo123
+                </p>
+            </div>
+        </div>
+
+        <!-- Signup Screen -->
+        <div id="signupScreen" class="screen">
+            <div style="padding: 20px;">
+                <h2 style="margin-bottom: 20px;">Create Account</h2>
+                <div class="form-group">
+                    <input type="text" id="signupName" placeholder="Full Name">
+                </div>
+                <div class="form-group">
+                    <input type="email" id="signupEmail" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="signupPassword" placeholder="Password (min 6 chars)">
+                </div>
+                <button onclick="handleSignup()">Sign Up</button>
+                <button onclick="showLogin()" style="background: #999; margin-top: 10px;">Back to Login</button>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="homeScreen" class="screen">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search products..." onkeyup="filterProducts()">
+            </div>
+            <div class="categories" id="categories"></div>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+
+        <!-- Cart Screen -->
+        <div id="cartScreen" class="screen">
+            <div id="cartItems"></div>
+            <div id="cartTotal" style="margin-top: 20px; padding: 16px; background: white; border-radius: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                    <strong>Total:</strong>
+                    <strong style="color: #FF6B35; font-size: 20px;" id="cartTotalAmount">$0.00</strong>
+                </div>
+                <button onclick="proceedToCheckout()">Proceed to Checkout</button>
+            </div>
+        </div>
+
+        <!-- Checkout Screen -->
+        <div id="checkoutScreen" class="screen">
+            <div style="padding: 20px;">
+                <h3 style="margin-bottom: 20px;">Shipping Information</h3>
+                <div class="form-group">
+                    <input type="text" id="shippingName" placeholder="Full Name">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="shippingAddress" placeholder="Address">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="shippingCity" placeholder="City">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="shippingZip" placeholder="ZIP Code">
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="shippingPhone" placeholder="Phone Number">
+                </div>
+                
+                <h3 style="margin: 20px 0 10px;">Order Summary</h3>
+                <div id="checkoutItems"></div>
+                <div id="checkoutTotal" style="margin: 20px 0;"></div>
+                
+                <button onclick="processPayment()" id="payButton">Pay with Stripe</button>
+            </div>
+        </div>
+
+        <!-- Order Confirmation Screen -->
+        <div id="confirmationScreen" class="screen">
+            <div style="text-align: center; padding: 40px 20px;">
+                <div style="font-size: 80px; margin-bottom: 20px;">✅</div>
+                <h2 style="color: #FF6B35; margin-bottom: 10px;">Order Confirmed!</h2>
+                <p style="color: #666; margin-bottom: 20px;">Your order has been placed successfully</p>
+                <div style="background: #f0f0f0; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                    <p><strong>Order ID:</strong> <span id="orderId"></span></p>
+                    <p><strong>Delivery Message Sent!</strong> 📧</p>
+                </div>
+                <button onclick="continueShopping()">Continue Shopping</button>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profileScreen" class="screen">
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 80px; margin-bottom: 10px;">👤</div>
+                <h3 id="profileName">User Name</h3>
+                <p id="profileEmail">user@email.com</p>
+                <button onclick="logout()" style="background: #dc3545; margin-top: 20px;">Logout</button>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settingsScreen" class="screen">
+            <div style="padding: 20px;">
+                <div class="settings-option" onclick="toggleDarkMode()">
+                    <span>🌙 Dark Mode</span>
+                    <div class="toggle-switch" id="darkModeToggle">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="settings-option" onclick="toggleNotifications()">
+                    <span>🔔 Push Notifications</span>
+                    <div class="toggle-switch" id="notifToggle">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="settings-option">
+                    <span>🌐 Language</span>
+                    <select id="languageSelect" onchange="changeLanguage()">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Service Screen -->
+        <div id="serviceScreen" class="screen">
+            <div style="padding: 20px;">
+                <div class="chat-container" id="chatMessages">
+                    <div class="message-bubble">Welcome to LiveShop Support! How can we help you today?</div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="chatInput" placeholder="Type your message..." style="flex: 1;" onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()" style="width: auto; padding: 12px 20px;">Send</button>
+                </div>
+                <button onclick="contactSupport()" style="margin-top: 20px; background: #28a745;">📞 Contact Support Hotline</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" data-screen="homeScreen" onclick="navigateTo('homeScreen')">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Home</span>
+        </div>
+        <div class="nav-item" data-screen="cartScreen" onclick="navigateTo('cartScreen')">
+            <span class="nav-icon">🛒</span>
+            <span class="nav-label">Cart</span>
+            <span id="cartBadge" style="display: none;" class="cart-badge">0</span>
+        </div>
+        <div class="nav-item" data-screen="profileScreen" onclick="navigateTo('profileScreen')">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Profile</span>
+        </div>
+        <div class="nav-item" data-screen="settingsScreen" onclick="navigateTo('settingsScreen')">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">Settings</span>
+        </div>
+        <div class="nav-item" data-screen="serviceScreen" onclick="navigateTo('serviceScreen')">
+            <span class="nav-icon">💬</span>
+            <span class="nav-label">Support</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Products Data
+    const products = [
+        { id: '1', name: 'iPhone 15 Pro Max', price: 1199, category: 'Electronics', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=200', rating: 4.8, stock: 15 },
+        { id: '2', name: 'Samsung Galaxy S24', price: 1299, category: 'Electronics', image: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=200', rating: 4.7, stock: 12 },
+        { id: '3', name: 'MacBook Pro M3', price: 1999, category: 'Electronics', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200', rating: 4.9, stock: 8 },
+        { id: '4', name: 'Sony Headphones', price: 399, category: 'Electronics', image: 'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=200', rating: 4.8, stock: 25 },
+        { id: '5', name: 'Nike Air Max', price: 159, category: 'Fashion', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200', rating: 4.6, stock: 30 },
+        { id: '6', name: 'Leather Jacket', price: 299, category: 'Fashion', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200', rating: 4.5, stock: 20 },
+        { id: '7', name: 'Designer Handbag', price: 449, category: 'Fashion', image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=200', rating: 4.7, stock: 10 },
+        { id: '8', name: 'Smart TV 65"', price: 899, category: 'Home', image: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=200', rating: 4.6, stock: 7 },
+        { id: '9', name: 'Coffee Maker', price: 89, category: 'Home', image: 'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=200', rating: 4.4, stock: 18 },
+        { id: '10', name: 'Yoga Mat', price: 29, category: 'Sports', image: 'https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=200', rating: 4.5, stock: 50 },
+        { id: '11', name: 'Dumbbell Set', price: 79, category: 'Sports', image: 'https://images.unsplash.com/photo-1586401100295-7a8096fd231a?w=200', rating: 4.7, stock: 22 },
+        { id: '12', name: 'Skincare Set', price: 89, category: 'Beauty', image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=200', rating: 4.6, stock: 35 }
+    ];
+
+    const categories = ['All', 'Electronics', 'Fashion', 'Home', 'Sports', 'Beauty'];
+
+    // App State
+    let currentUser = null;
+    let cart = [];
+    let selectedCategory = 'All';
+    let searchQuery = '';
+    let darkMode = false;
+    let notifications = true;
+    let chatMessages = [{ text: 'Welcome to LiveShop Support! How can we help you today?', sent: false }];
+
+    // Initialize App
+    function init() {
+        loadFromStorage();
+        renderCategories();
+        if (currentUser) {
+            showHome();
+        }
+        updateCartBadge();
+    }
+
+    // Storage Functions
+    function saveToStorage() {
+        localStorage.setItem('liveshop_user', JSON.stringify(currentUser));
+        localStorage.setItem('liveshop_cart', JSON.stringify(cart));
+    }
+
+    function loadFromStorage() {
+        const savedUser = localStorage.getItem('liveshop_user');
+        const savedCart = localStorage.getItem('liveshop_cart');
+        if (savedUser) currentUser = JSON.parse(savedUser);
+        if (savedCart) cart = JSON.parse(savedCart);
+    }
+
+    // Authentication
+    function handleLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        if (email === 'demo@liveshop.com' && password === 'demo123') {
+            currentUser = { email: 'demo@liveshop.com', name: 'Demo User' };
+            saveToStorage();
+            showToast('Login successful! Welcome back!');
+            showHome();
+        } else {
+            showToast('Invalid credentials! Use demo@liveshop.com / demo123');
+        }
+    }
+
+    function handleSignup() {
+        const name = document.getElementById('signupName').value;
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        
+        if (!name || !email || !password || password.length < 6) {
+            showToast('Please fill all fields correctly');
+            return;
+        }
+        
+        currentUser = { email, name };
+        saveToStorage();
+        showToast('Account created successfully!');
+        showHome();
+    }
+
+    function logout() {
+        currentUser = null;
+        cart = [];
+        saveToStorage();
+        showToast('Logged out successfully');
+        showLogin();
+    }
+
+    // Navigation
+    function showLogin() {
+        hideAllScreens();
+        document.getElementById('loginScreen').classList.add('active');
+        document.getElementById('signupScreen').classList.remove('active');
+    }
+
+    function showSignup() {
+        hideAllScreens();
+        document.getElementById('signupScreen').classList.add('active');
+    }
+
+    function showHome() {
+        hideAllScreens();
+        document.getElementById('homeScreen').classList.add('active');
+        renderProducts();
+        updateActiveNav('homeScreen');
+    }
+
+    function showCart() {
+        hideAllScreens();
+        document.getElementById('cartScreen').classList.add('active');
+        renderCart();
+        updateActiveNav('cartScreen');
+    }
+
+    function showProfile() {
+        hideAllScreens();
+        document.getElementById('profileScreen').classList.add('active');
+        document.getElementById('profileName').textContent = currentUser?.name || 'User';
+        document.getElementById('profileEmail').textContent = currentUser?.email || 'user@email.com';
+        updateActiveNav('profileScreen');
+    }
+
+    function showSettings() {
+        hideAllScreens();
+        document.getElementById('settingsScreen').classList.add('active');
+        updateActiveNav('settingsScreen');
+    }
+
+    function showService() {
+        hideAllScreens();
+        document.getElementById('serviceScreen').classList.add('active');
+        renderChatMessages();
+        updateActiveNav('serviceScreen');
+    }
+
+    function navigateTo(screen) {
+        if (screen === 'homeScreen') showHome();
+        else if (screen === 'cartScreen') showCart();
+        else if (screen === 'profileScreen') showProfile();
+        else if (screen === 'settingsScreen') showSettings();
+        else if (screen === 'serviceScreen') showService();
+    }
+
+    function hideAllScreens() {
+        const screens = ['loginScreen', 'signupScreen', 'homeScreen', 'cartScreen', 'checkoutScreen', 
+                        'confirmationScreen', 'profileScreen', 'settingsScreen', 'serviceScreen'];
+        screens.forEach(screen => {
+            const el = document.getElementById(screen);
+            if (el) el.classList.remove('active');
+        });
+    }
+
+    function updateActiveNav(screen) {
+        document.querySelectorAll('.nav-item').forEach(item => {
+            if (item.dataset.screen === screen) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    // Product Functions
+    function renderCategories() {
+        const container = document.getElementById('categories');
+        container.innerHTML = categories.map(cat => `
+            <div class="category-chip ${selectedCategory === cat ? 'active' : ''}" onclick="filterByCategory('${cat}')">
+                ${cat}
+            </div>
+        `).join('');
+    }
+
+    function filterByCategory(category) {
+        selectedCategory = category;
+        renderCategories();
+        renderProducts();
+    }
+
+    function filterProducts() {
+        searchQuery = document.getElementById('searchInput').value.toLowerCase();
+        renderProducts();
+    }
+
+    function renderProducts() {
+        const filtered = products.filter(p => {
+            const matchCategory = selectedCategory === 'All' || p.category === selectedCategory;
+            const matchSearch = p.name.toLowerCase().includes(searchQuery);
+            return matchCategory && matchSearch;
+        });
+        
+        const container = document.getElementById('productsGrid');
+        container.innerHTML = filtered.map(product => `
+            <div class="product-card" onclick="viewProduct('${product.id}')">
+                <img src="${product.image}" class="product-image" alt="${product.name}">
+                <div class="product-info">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">$${product.price}</div>
+                    <div class="rating">⭐ ${product.rating} (${product.stock} in stock)</div>
+                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">Add to Cart</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function viewProduct(productId) {
+        const product = products.find(p => p.id === productId);
+        showToast(`${product.name} - $${product.price}`);
+    }
+
+    // Cart Functions
+    function addToCart(productId) {
+        const product = products.find(p => p.id === productId);
+        const existing = cart.find(item => item.id === productId);
+        
+        if (existing) {
+            existing.quantity++;
+        } else {
+            cart.push({ ...product, quantity: 1 });
+        }
+        
+        saveToStorage();
+        updateCartBadge();
+        showToast(`${product.name} added to cart!`);
+        renderCart();
+    }
+
+    function updateQuantity(productId, delta) {
+        const item = cart.find(i => i.id === productId);
+        if (item) {
+            item.quantity += delta;
+            if (item.quantity <= 0) {
+                cart = cart.filter(i => i.id !== productId);
+            }
+            saveToStorage();
+            updateCartBadge();
+            renderCart();
+        }
+    }
+
+    function removeFromCart(productId) {
+        cart = cart.filter(i => i.id !== productId);
+        saveToStorage();
+        updateCartBadge();
+        renderCart();
+        showToast('Item removed from cart');
+    }
+
+    function renderCart() {
+        const container = document.getElementById('cartItems');
+        if (cart.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 40px;">🛒 Your cart is empty<br><button onclick="showHome()" style="margin-top: 20px;">Start Shopping</button></div>';
+            document.getElementById('cartTotalAmount').textContent = '$0.00';
+            return;
+        }
+        
+        container.innerHTML = cart.map(item => `
+            <div class="cart-item">
+                <img src="${item.image}" class="cart-item-image">
+                <div class="cart-item-details">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-price">$${item.price}</div>
+                    <div class="quantity-controls">
+                        <div class="quantity-btn" onclick="updateQuantity('${item.id}', -1)">-</div>
+                        <span>${item.quantity}</span>
+                        <div class="quantity-btn" onclick="updateQuantity('${item.id}', 1)">+</div>
+                        <div class="quantity-btn" onclick="removeFromCart('${item.id}')" style="background: #ff4444; color: white;">🗑️</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        document.getElementById('cartTotalAmount').textContent = `$${total.toFixed(2)}`;
+    }
+
+    function updateCartBadge() {
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const badge = document.getElementById('cartBadge');
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    // Checkout & Payment
+    function proceedToCheckout() {
+        if (cart.length === 0) {
+            showToast('Your cart is empty!');
+            return;
+        }
+        hideAllScreens();
+        document.getElementById('checkoutScreen').classList.add('active');
+        renderCheckout();
+    }
+
+    function renderCheckout() {
+        const itemsContainer = document.getElementById('checkoutItems');
+        itemsContainer.innerHTML = cart.map(item => `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>${item.name} x ${item.quantity}</span>
+                <span>$${(item.price * item.quantity).toFixed(2)}</span>
+            </div>
+        `).join('');
+        
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        document.getElementById('checkoutTotal').innerHTML = `
+            <div style="border-top: 2px solid #e0e0e0; padding-top: 16px;">
+                <strong>Total: $${total.toFixed(2)}</strong>
+            </div>
+        `;
+    }
+
+    async function processPayment() {
+        const name = document.getElementById('shippingName').value;
+        const address = document.getElementById('shippingAddress').value;
+        const city = document.getElementById('shippingCity').value;
+        const zip = document.getElementById('shippingZip').value;
+        const phone = document.getElementById('shippingPhone').value;
+        
+        if (!name || !address || !city || !zip || !phone) {
+            showToast('Please fill all shipping details');
+            return;
+        }
+        
+        const payBtn = document.getElementById('payButton');
+        payBtn.disabled = true;
+        payBtn.innerHTML = '<span class="spinner"></span> Processing...';
+        
+        // Simulate Stripe payment processing
+        setTimeout(() => {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const orderId = 'ORD-' + Date.now();
+            
+            // Send delivery message
+            sendDeliveryMessage(orderId);
+            
+            // Process payment
+            showToast('Payment successful!');
+            
+            // Clear cart
+            cart = [];
+            saveToStorage();
+            updateCartBadge();
+            
+            // Show confirmation
+            hideAllScreens();
+            document.getElementById('orderId').textContent = orderId;
+            document.getElementById('confirmationScreen').classList.add('active');
+            
+            payBtn.disabled = false;
+            payBtn.innerHTML = 'Pay with Stripe';
+        }, 2000);
+    }
+
+    function sendDeliveryMessage(orderId) {
+        showToast(`📧 Delivery confirmation sent for order ${orderId}`);
+        // In production, this would send an actual email/SMS
+    }
+
+    function continueShopping() {
+        showHome();
+    }
+
+    // Customer Service Functions
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        if (!message) return;
+        
+        chatMessages.push({ text: message, sent: true });
+        input.value = '';
+        renderChatMessages();
+        
+        // Auto response
+        setTimeout(() => {
+            chatMessages.push({ text: getAutoResponse(message), sent: false });
+            renderChatMessages();
+        }, 500);
+    }
+
+    function getAutoResponse(message) {
+        const lower = message.toLowerCase();
+        if (lower.includes('delivery')) return 'Your order will be delivered within 3-5 business days.';
+        if (lower.includes('refund')) return 'We offer 30-day refund policy. Please contact our support team.';
+        if (lower.includes('payment')) return 'We accept all major credit cards and Stripe payments.';
+        return 'Thank you for contacting LiveShop support. Our team will assist you shortly!';
+    }
+
+    function renderChatMessages() {
+        const container = document.getElementById('chatMessages');
+        container.innerHTML = chatMessages.map(msg => `
+            <div class="message-bubble ${msg.sent ? 'sent' : ''}">
+                ${msg.text}
+            </div>
+        `).join('');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function contactSupport() {
+        showToast('📞 Support hotline: +1 (800) 123-4567');
+        chatMessages.push({ text: 'Support hotline: +1 (800) 123-4567. Our agents are available 24/7.', sent: false });
+        renderChatMessages();
+    }
+
+    // Settings Functions
+    function toggleDarkMode() {
+        darkMode = !darkMode;
+        const toggle = document.getElementById('darkModeToggle');
+        if (darkMode) {
+            document.body.style.background = '#1a1a1a';
+            document.querySelector('.app-container').style.background = '#2d2d2d';
+            toggle.classList.add('active');
+        } else {
+            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            document.querySelector('.app-container').style.background = '#f5f5f5';
+            toggle.classList.remove('active');
+        }
+    }
+
+    function toggleNotifications() {
+        notifications = !notifications;
+        const toggle = document.getElementById('notifToggle');
+        if (notifications) {
+            toggle.classList.add('active');
+            showToast('Notifications enabled');
+        } else {
+            toggle.classList.remove('active');
+            showToast('Notifications disabled');
+        }
+    }
+
+    function changeLanguage() {
+        const lang = document.getElementById('languageSelect').value;
+        showToast(`Language changed to ${lang.toUpperCase()}`);
+    }
+
+    // Toast Notification
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Start App
+    init();
+</script>
+</body>
+</html>
